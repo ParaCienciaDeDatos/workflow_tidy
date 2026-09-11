@@ -779,10 +779,10 @@ Mg. Ana Haique
 <pre><code># A tibble: 4 × 6
   number operation type      trained skip  id             
    &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;lgl&gt;   &lt;lgl&gt; &lt;chr&gt;          
-1      1 step      mutate    FALSE   FALSE mutate_sXCmN   
-2      2 step      log       FALSE   FALSE log_GxHFj      
-3      3 step      normalize FALSE   FALSE normalize_VwmBV
-4      4 step      dummy     FALSE   FALSE dummy_Xxq14    </code></pre>
+1      1 step      mutate    FALSE   FALSE mutate_2ZMCB   
+2      2 step      log       FALSE   FALSE log_kFc8q      
+3      3 step      normalize FALSE   FALSE normalize_6n4Az
+4      4 step      dummy     FALSE   FALSE dummy_BZ8b1    </code></pre>
 </div>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href=""></a>  <span class="co"># El preprocesamiento sólo ha sido definido</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
@@ -815,10 +815,10 @@ Mg. Ana Haique
 <pre><code># A tibble: 4 × 6
   number operation type      trained skip  id             
    &lt;int&gt; &lt;chr&gt;     &lt;chr&gt;     &lt;lgl&gt;   &lt;lgl&gt; &lt;chr&gt;          
-1      1 step      mutate    TRUE    FALSE mutate_sXCmN   
-2      2 step      log       TRUE    FALSE log_GxHFj      
-3      3 step      normalize TRUE    FALSE normalize_VwmBV
-4      4 step      dummy     TRUE    FALSE dummy_Xxq14    </code></pre>
+1      1 step      mutate    TRUE    FALSE mutate_2ZMCB   
+2      2 step      log       TRUE    FALSE log_kFc8q      
+3      3 step      normalize TRUE    FALSE normalize_6n4Az
+4      4 step      dummy     TRUE    FALSE dummy_BZ8b1    </code></pre>
 </div>
 </div>
 </section>
@@ -954,15 +954,15 @@ Mg. Ana Haique
    .pred
    &lt;dbl&gt;
  1  3.06
- 2  2.53
- 3  3.20
- 4  2.63
- 5  2.74
- 6  2.75
- 7  2.67
- 8  2.61
- 9  3.09
-10  2.77
+ 2  2.82
+ 3  3.17
+ 4  2.75
+ 5  3.09
+ 6  2.80
+ 7  2.94
+ 8  3.29
+ 9  2.72
+10  2.58
 # ℹ 343 more rows</code></pre>
 </div>
 </div>
@@ -980,15 +980,15 @@ Mg. Ana Haique
    .pred cuota10
    &lt;dbl&gt;   &lt;dbl&gt;
  1  3.06    3.00
- 2  2.53    2.56
- 3  3.20    3.24
- 4  2.63    2.66
- 5  2.74    2.71
- 6  2.75    2.78
- 7  2.67    2.72
- 8  2.61    2.66
- 9  3.09    3.14
-10  2.77    2.80
+ 2  2.82    2.80
+ 3  3.17    3.22
+ 4  2.75    2.78
+ 5  3.09    3.13
+ 6  2.80    2.72
+ 7  2.94    2.89
+ 8  3.29    3.35
+ 9  2.72    2.71
+10  2.58    2.57
 # ℹ 343 more rows</code></pre>
 </div>
 </div>
@@ -1017,9 +1017,9 @@ Mg. Ana Haique
 <pre><code># A tibble: 3 × 3
   .metric .estimator .estimate
   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard      0.0489
-2 rsq     standard      0.961 
-3 mae     standard      0.0455</code></pre>
+1 rmse    standard      0.0483
+2 rsq     standard      0.957 
+3 mae     standard      0.0448</code></pre>
 </div>
 </div>
 </section>
@@ -1050,14 +1050,13 @@ Mg. Ana Haique
 <pre><code># A tibble: 2 × 3
   .metric .estimator .estimate
   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
-1 rmse    standard       110. 
-2 mae     standard        90.6</code></pre>
+1 rmse    standard       108. 
+2 mae     standard        89.0</code></pre>
 </div>
 </div>
 </section>
-<section id="ejerciciooajustra-un-modelo-con-tidymodels" class="slide level2">
-<h2>🛠️ Ejercicioo:Ajustra un Modelo con <code class="scrollable">tidymodels</code></h2>
-<p><strong>Objetivo:</strong> Crear un workflow que prediga el <strong>precio de los diamantes</strong> (<code>price</code>) según sus características usando el dataset <code>diamonds</code>.</p>
+<section id="ejercicioajustar-un-modelo-con-tidymodels" class="slide level2">
+<h2>🛠 Ejercicio:Ajustar un Modelo con <code class="scrollable">tidymodels</code></h2>
 <div class="columns">
 <div class="column" style="width:50%;">
 <ol type="1">
@@ -1069,7 +1068,7 @@ Mg. Ana Haique
 <ul>
 <li>Crea una receta con la fórmula: <code>price ~ carat + cut + color + clarity</code>.</li>
 <li>Aplica transformación <span class="math inline">\(\log_{10}\)</span> a la variable respuesta <code>price</code> y al predictor <code>carat</code>.</li>
-<li>Pasa las variables categóricas a variables dummy (<code>step_dummy</code>).</li>
+<li>Variables categóricas a variables dummy (<code>step_dummy</code>).</li>
 </ul></li>
 </ol>
 </div><div class="column" style="width:50%;">

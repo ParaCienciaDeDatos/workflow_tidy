@@ -1,0 +1,12 @@
+.Rhistory
+.RData
+.Rapp.history
+.Ruserdata
+.Rproj.user/
+*_files/
+*_cache/
+*.html
+.DS_Store
+
+# Cache de paquetes (mapas, etc.)
+*.cache/

@@ -594,9 +594,8 @@ prestamos_metrics_real(prestamo_test_res_real,
 ```
 
 
-## 🛠️ Ejercicioo:Ajustra un Modelo con `tidymodels`{.scrollable}
+## 🛠  Ejercicio:Ajustar un Modelo con `tidymodels`{.scrollable}
 
-**Objetivo:** Crear un workflow que prediga el **precio de los diamantes** (`price`) según sus características  usando el dataset `diamonds`.
 
 ::: {.columns}
 
@@ -607,7 +606,7 @@ prestamos_metrics_real(prestamo_test_res_real,
 2. **Preprocesamiento (`recipes`):**
    * Crea una receta con la fórmula: `price ~ carat + cut + color + clarity`.
    * Aplica transformación $\log_{10}$ a la variable respuesta `price` y al predictor `carat`.
-   * Pasa las variables categóricas a variables dummy (`step_dummy`).
+   * Variables categóricas a variables dummy (`step_dummy`).
 :::
 
 ::: {.column width="50%"}

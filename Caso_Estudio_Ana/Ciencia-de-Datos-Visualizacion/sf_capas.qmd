@@ -1,0 +1,201 @@
+---
+title: "Datos Georreferenciados"
+subtitle: "SF - Simple Features"
+author: "Ciencia de Datos"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    code-fold: false
+    code-copy: true
+    theme: cosmo
+    lang: es
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  fig.width = 8,
+  fig.height = 5
+)
+```
+
+## Introduccion
+
+
+En esta sección vamos a trabajar con la base `ypf_neuquen.xlsx`, que tiene **3 hojas** relacionadas: información de cada pozo, sus coordenadas y la formación geológica a la que pertenece. En total son **3.617 pozos** distribuidos por la Cuenca Neuquina.
+
+La pregunta guía: ¿Dónde están los pozos de YPF en Neuquén y cómo se distribuyen?
+
+::: {.callout-note}
+
+Los datos georreferenciados son observaciones asociadas explícitamente a una localización en el espacio, representada mediante coordenadas o geometrías (puntos, líneas o polígonos) dentro de un sistema de referencia geográfico. Su incorporación permite integrar la dimensión espacial al análisis estadístico, revelando patrones, relaciones y heterogeneidades territoriales que no son evidentes en datos convencionales.
+:::
+
+## Setup
+
+Librerias que vamos a usar:
+
+```{r librerias}
+library(tidyverse)
+library(readxl)
+library(sf)
+library(ggspatial)   # barra de escala y norte
+```
+
+## 1. Cargar los datos
+
+La base viene en **3 hojas** de un mismo Excel. El archivo completo es chico pero tiene estructura relacional: las hojas se conectan por identificadores (id).
+
+```{r cargar-ypf}
+pozos      <- read_xlsx("ypf_neuquen.xlsx", sheet = "Pozo")
+ubicacion  <- read_xlsx("ypf_neuquen.xlsx", sheet = "Ubicacion")
+formacion  <- read_xlsx("ypf_neuquen.xlsx", sheet = "Formacion")
+```
+
+### Un vistazo rápido a cada tabla
+
+```{r glimpse-pozos}
+glimpse(pozos)
+```
+
+```{r glimpse-ubicacion}
+glimpse(ubicacion)
+```
+
+```{r glimpse-formacion}
+glimpse(formacion)
+```
+
+
+## 2. Pozos en produccion efectiva
+
+1) Para hacer el mapa necesitamos **coordenadas** (de `Ubicacion`) y **formación**.
+
+2) Luego filtramos los pozos que nos interesan.
+
+```{r filtrar-productores}
+pozos_full <- pozos |>
+  left_join(ubicacion, by = "idubicacion") |>
+  left_join(formacion, by = "idformacion") |>
+  mutate(formacion = str_to_title(formacion)) |> # Pone mayúscula solo en la primera letra de cada palabra, el resto en minúscula.
+  filter(tipoestado == "Extracción Efectiva")
+
+nrow(pozos_full)
+head(pozos_full)
+```
+
+::: {.callout-note}
+## Lectura del filtro
+
+Pasamos de 3.617 pozos totales a **1.876 pozos en produccion efectiva**. Es casi la mitad: estamos descartando los que están parados, en estudio o abandonados.
+:::
+
+## 3. De dataframe a `sf` 
+
+Hasta aca `pozos_full` es un dataframe común. Para que `ggplot` sepa donde esta cada fila en el mundo, lo convertimos a `sf`:
+
+```{r a-sf}
+pozos_sf <- st_as_sf(
+  pozos_full,
+  coords = c("coordenadax", "coordenaday"),
+  crs    = 4326      # WGS84 (lat/lon)
+)
+```
+
+::: {.callout-tip}
+## Que significa `crs = 4326`
+
+CRS (Coordinate Reference System): define cómo los números de coordenadas se corresponden con posiciones reales en la Tierra. Indica el sistema de referencia, datum, proyección, etc. El numero 4326 es el codigo para **WGS84**, el sistema que usan los GPS y Google Maps. Como nuestras columnas ya estan en grados decimales, ese es el CRS correcto.
+
+:::
+
+Veamos el objeto sf:
+
+```{r head-sf}
+pozos_sf |> dplyr::select(idpozo, tipoestado, formacion) 
+# alguno de los paquetes que llamamos está enmascarando la de dplyr.
+```
+
+Nótese la última columna: `Geometry type: POINT`. 
+
+## 4. Primer mapa
+
+```{r}
+#| fig-width: 10
+#| fig-height: 8
+
+
+ggplot(pozos_sf) +
+  annotation_map_tile(zoomin = 1) + # Agrega un mapa base de OpenStreetMap de fondo
+  geom_sf(color = "red", size = 2) + #	Dibuja los puntos
+  theme_void()
+```
+
+
+### 5. Color por formacion geológica
+
+Agregamos color a las 6 formaciones con más pozos. 
+
+```{r capas-color}
+top_formaciones <- pozos_sf |> # las que mas pozos tienen
+  count(formacion, sort = TRUE) |> #cuenta pozos por formación y las ordena 
+  slice_head(n = 6) |> #Se queda con las 6 primeras 
+  pull(formacion) # extrae solo formación
+
+pozos_top <- pozos_sf |>
+  filter(formacion %in% top_formaciones) # %in% mach operator
+
+ggplot(pozos_top) +
+  annotation_map_tile(zoomin = 1) +
+  geom_sf(aes(color = formacion), size = 2) +
+  labs(color = "Formación") + #etiqueta
+  theme_void() +
+  theme(legend.position = "right")
+```
+
+
+## 6. Anotaciones cartograficas con `ggspatial`
+
+Un mapa "profesional" tiene barra de escala y norte. `ggspatial` los agrega con dos `annotation_*()` fáciles:
+
+```{r con-anotaciones}
+
+ggplot(pozos_top) +
+  annotation_map_tile(zoomin = 1) +
+  geom_sf(aes(color = formacion), size = 2) +
+
+  # Escala
+  annotation_scale(
+    location = "bl", # bottom-left
+    width_hint = 0.25 # ocupa el 25% del ancho del plot.
+  ) +
+
+  # Flecha del norte
+  annotation_north_arrow(
+    location = "tr", # top-right
+    which_north = "true", # norte real (no magnético)
+    style = north_arrow_fancy_orienteering
+  ) +
+  
+  # Leyenda
+  labs(color = "Formación") +
+  theme_void()
+
+```
+
+## 7. Ejercicios sugeridos:
+
+Para resolver en clase o en casa.
+
+1. Genera un mapa para representar únicamente los pozos de la formación Vaca Muerta.
+
+2. Construye un mapa que muestre exclusivamente los pozos que cumplan simultáneamente las siguientes condiciones:
+
+- Formación: Vaca Muerta.
+- Tipo de recurso: Petróleo.
+- Estado: Producción efectiva.
