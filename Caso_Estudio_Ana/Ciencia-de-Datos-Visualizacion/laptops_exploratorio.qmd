@@ -36,7 +36,7 @@ Una visualización no decora el análisis: produce conocimiento que los resúmen
 No todos los canales visuales comunican igual de bien. Ordenados de mayor a menor precisión perceptiva:
 
 | Canal | Ejemplo típico | Cuándo usarlo |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | **Posición** (x, y) | Scatter, dotplot | Cuando la variable es la más importante del gráfico |
 | **Longitud** | Barras, lollipop | Comparar magnitudes entre categorías |
 | **Ángulo / pendiente** | Pie chart, líneas | Solo si no queda otra (los ángulos se perciben mal) |
@@ -46,7 +46,7 @@ No todos los canales visuales comunican igual de bien. Ordenados de mayor a meno
 ## Que gráfico usar?
 
 | Querés mostrar... | Usá... | Ejemplo |
-|----|----|----|
+|------------------------|------------------------|------------------------|
 | Distribución de 1 variable | Histograma / boxplot / density | `cpu_score` por tipo (facetado) |
 | Comparar 1 variable entre grupos | Boxplot / violin / bar con error | `ram_gb` por tipo |
 | Relación entre 2 numéricas | Scatter | `precio_usd` vs `cpu_score` |
